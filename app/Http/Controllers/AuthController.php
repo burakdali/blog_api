@@ -55,7 +55,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+        $user->attachRole('user');
         $token = Auth::login($user);
         return response()->json([
             'status' => 'success',
@@ -65,6 +65,21 @@ class AuthController extends Controller
                 'token' => $token,
                 'type' => 'bearer',
             ]
+        ]);
+    }
+    public function edit(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User updated successfully',
+            'user' => $user,
         ]);
     }
 
