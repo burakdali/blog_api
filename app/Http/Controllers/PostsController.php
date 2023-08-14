@@ -92,9 +92,20 @@ class PostsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
         $userPost = Auth::user()->posts;
-        if ($post == $userPost) {
+        $posts = json_decode($userPost, true);
+        $isOwner = false;
+
+        foreach ($posts as $sub) {
+            foreach ($sub as $key => $value) {
+                if ($key == 'id' && $value == $id) {
+                    $isOwner = true;
+                }
+            }
+        }
+
+        if ($isOwner) {
+            $post = Post::find($id);
             $post->update([
                 'title' => $request->title,
                 'content' => $request->content,
@@ -105,7 +116,7 @@ class PostsController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Post has been updated succesfully',
-                'Post' => 'post edited succesfully',
+                'Post' => $post
             ]);
         }
     }
