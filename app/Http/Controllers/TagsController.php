@@ -16,7 +16,7 @@ class TagsController extends Controller
      */
     public function index()
     {
-        $tags = Tag::all();
+        $tags = Tag::paginate(15);
         return response()->json([
             'status' => 'success',
             'message' => 'Tags that is stored in database',

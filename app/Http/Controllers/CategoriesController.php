@@ -16,7 +16,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::paginate(15);
         return response()->json([
             'status' => 'success',
             'message' => 'categories that is stored in database',

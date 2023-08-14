@@ -18,7 +18,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-        $post = Post::all();
+        $post = Post::paginate(15);
         return response()->json([
             'status' => 'success',
             'message' => 'Posts that is stored in database',
