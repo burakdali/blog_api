@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
+use App\Models\Post;
 use App\Models\Posts;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostsController extends Controller
 {
@@ -14,7 +17,12 @@ class PostsController extends Controller
      */
     public function index()
     {
-        //
+        $post = Post::all();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Posts that is stored in database',
+            'Posts' => $post,
+        ]);
     }
 
     /**
@@ -23,9 +31,20 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        $post = Post::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'status' => $request->status,
+            'user_id' => Auth::user()->id,
+            'category_id' => $request->category_id
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Post has been added succesfully',
+            'Post' => $post,
+        ]);
     }
 
     /**
@@ -34,9 +53,14 @@ class PostsController extends Controller
      * @param  \App\Models\Posts  $posts
      * @return \Illuminate\Http\Response
      */
-    public function show(Posts $posts)
+    public function show($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Post that you asked for',
+            'Post' => $post,
+        ]);
     }
 
     /**
