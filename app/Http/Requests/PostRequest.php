@@ -26,8 +26,8 @@ class PostRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'content' => ['required'],
-            'user_id' => ['required', 'number'],
-            'category_id' => ['required', 'number'],
+            'category_id' => ['required', 'numeric'],
+            'filename' => ['string'],
         ];
     }
 }

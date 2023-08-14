@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\TagsController;
 use Illuminate\Http\Request;
@@ -17,8 +18,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 #Request must be from User who has Admin role only
-Route::group(['middleware' => ['auth', 'admin']], function () {
+Route::group(['middleware' => ['admin']], function () {
     Route::controller(CategoriesController::class)->group(function () {
         Route::get('Categories', 'index');
         Route::post('Category_store', 'store');
@@ -32,14 +34,16 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     Route::delete('Tag_delete/{id}', [TagsController::class, 'destroy']);
 });
-
 #Request must be from User who has Author role only
-Route::group(['middleware' => ['auth', 'author']], function () {
+Route::group(['middleware' => ['author']], function () {
+    Route::get('get_my_posts', [PostsController::class, 'getMyPosts']);
     Route::post('Post_store', [PostsController::class, 'store']);
     Route::delete('Post_delete/{id}', [PostsController::class, 'destroy']);
-    Route::put('Post_update/{id}', [PostsController::class, 'update']);
     Route::post('Tag_store', [TagsController::class, 'store']);
     Route::put('Tag_update/{id}', [TagsController::class, 'update']);
+    Route::post('attach_tag_to_post', [PostsController::class, 'attachTagToPost']);
+    Route::put('Post_update/{id}', [PostsController::class, 'update']);
+    Route::post('image', [ImagesController::class, 'store']);
 });
 
 Route::controller(AuthController::class)->group(function () {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImageRequest;
+use App\Models\Image;
 use App\Models\Images;
 use Illuminate\Http\Request;
 
@@ -12,9 +14,8 @@ class ImagesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ImageRequest $request)
     {
-        //
     }
 
     /**
@@ -25,7 +26,17 @@ class ImagesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $image = $request->file('image');
+        $filename = time() . '.' . $image->getClientOriginalExtension();
+        $imagePath = $image->storeAs('public/images', $filename);
+        $image = Image::create([
+            'filename' => $imagePath,
+            'post_id' => $request->post_id,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Image added successfully',
+        ]);
     }
 
     /**
