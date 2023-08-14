@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('category_tag', function (Blueprint $table) {
-            $table->foreignId('category_id');
-            $table->foreign('category_id')->on('categories')->references('id')->cascadeOnDelete();
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->foreignId('post_id');
+            $table->foreign('post_id')->on('posts')->references('id')->cascadeOnDelete();
             $table->foreignId('tag_id');
             $table->foreign('tag_id')->on('tags')->references('id')->cascadeOnDelete();
             $table->timestamps();

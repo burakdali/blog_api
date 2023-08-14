@@ -9,8 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Tag extends Model
 {
     use HasFactory;
-    function categories(): BelongsToMany
+    function posts(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Post::class);
     }
+    protected $fillable = [
+        'name',
+    ];
 }

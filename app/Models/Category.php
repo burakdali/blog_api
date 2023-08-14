@@ -14,8 +14,8 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
-    function tag(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
+
+    protected $fillable = [
+        'name',
+    ];
 }

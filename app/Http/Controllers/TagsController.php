@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TagRequest;
+use App\Models\Tag;
 use App\Models\Tags;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,12 @@ class TagsController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Tags that is stored in database',
+            'Tags' => $tags,
+        ]);
     }
 
     /**
@@ -23,9 +30,16 @@ class TagsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
-        //
+        $tag = Tag::create([
+            'name' => $request->name,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Tag added successfully',
+            'Tag' => $tag,
+        ]);
     }
 
     /**
@@ -46,9 +60,17 @@ class TagsController extends Controller
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tags $tags)
+    public function update(TagRequest $request, $id)
     {
-        //
+        $tag = Tag::findOrFail($id);
+        $tag->update([
+            'name' => $request->name,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Tag updated successfully',
+            'Tag' => $tag,
+        ]);
     }
 
     /**
@@ -57,8 +79,14 @@ class TagsController extends Controller
      * @param  \App\Models\Tags  $tags
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tags $tags)
+    public function destroy($id)
     {
-        //
+        $tag = Tag::findOrFail($id);
+        $tag->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Tag has been deleted successfully',
+            'Tag' => $tag,
+        ]);
     }
 }

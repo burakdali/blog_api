@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Categories;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -14,7 +16,12 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::all();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'categories that is stored in database',
+            'category' => $categories,
+        ]);
     }
 
     /**
@@ -23,9 +30,16 @@ class CategoriesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
-        //
+        $category = Category::create([
+            'name' => $request->name,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category added successfully',
+            'category' => $category,
+        ]);
     }
 
     /**
@@ -46,9 +60,17 @@ class CategoriesController extends Controller
      * @param  \App\Models\Categories  $categories
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Categories $categories)
+    public function update(CategoryRequest $request, $id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->update([
+            'name' => $request->name,
+        ]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category updated successfully',
+            'user' => $category,
+        ]);
     }
 
     /**
@@ -57,8 +79,14 @@ class CategoriesController extends Controller
      * @param  \App\Models\Categories  $categories
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Categories $categories)
+    public function destroy($id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $category->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Category deleted successfully',
+            'category' => $category,
+        ]);
     }
 }
