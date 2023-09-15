@@ -6,22 +6,21 @@ use App\Http\Requests\CategoryRequest;
 use App\Models\Categories;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
+use Exception;
 
 class CategoriesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    use ResponseTrait;
+
     public function index()
     {
-        $categories = Category::paginate(15);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'categories that is stored in database',
-            'category' => $categories,
-        ]);
+        try {
+            $categories = Category::paginate(15);
+            return $this->successWithData($categories);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
 
     /**
@@ -32,14 +31,14 @@ class CategoriesController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = Category::create([
-            'name' => $request->name,
-        ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Category added successfully',
-            'category' => $category,
-        ]);
+        try {
+            $category = Category::create([
+                'name' => $request->name,
+            ]);
+            return $this->successWithData($category);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
 
     /**
@@ -62,15 +61,15 @@ class CategoriesController extends Controller
      */
     public function update(CategoryRequest $request, $id)
     {
-        $category = Category::findOrFail($id);
-        $category->update([
-            'name' => $request->name,
-        ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Category updated successfully',
-            'user' => $category,
-        ]);
+        try {
+            $category = Category::findOrFail($id);
+            $category->update([
+                'name' => $request->name,
+            ]);
+            return $this->successWithData($category);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
 
     /**
@@ -81,12 +80,12 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Category deleted successfully',
-            'category' => $category,
-        ]);
+        try {
+            $category = Category::findOrFail($id);
+            $category->delete();
+            return $this->successWithData($category);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
 }
