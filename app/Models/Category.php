@@ -14,6 +14,10 @@ class Category extends Model
     {
         return $this->hasMany(Post::class);
     }
+    function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
 
     protected $fillable = [
         'name',
