@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::controller(PostsController::class)->group(function () {
+    Route::get('Posts', 'index');
+    Route::get('Posts/{id}', 'show');
+});
 #Request must be from User who has Admin role only
 Route::group(['middleware' => ['admin']], function () {
     Route::controller(CategoriesController::class)->group(function () {
@@ -27,10 +31,7 @@ Route::group(['middleware' => ['admin']], function () {
         Route::put('Category_update/{id}', 'update');
         Route::delete('Category_delete/{id}', 'destroy');
     });
-    Route::controller(PostsController::class)->group(function () {
-        Route::get('Posts', 'index');
-        Route::get('Posts/{id}', 'show');
-    });
+
 
     Route::delete('Tag_delete/{id}', [TagsController::class, 'destroy']);
 });

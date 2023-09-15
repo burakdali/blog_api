@@ -8,127 +8,102 @@ use App\Models\Posts;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\ResponseTrait;
+use Exception;
 
 class PostsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    use ResponseTrait;
+
     public function index()
     {
-        $post = Post::paginate(15);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Posts that is stored in database',
-            'Posts' => $post,
-        ]);
+        try {
+            $post = Post::all();
+            return $this->successWithData($post);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
     public function getMyPosts()
     {
-        $posts = Post::where('user_id', Auth::user()->id)->get();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Your Posts',
-            'Posts' => $posts,
-        ]);
+        try {
+            $posts = Post::where('user_id', Auth::user()->id)->get();
+            return $this->successWithData($posts);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
     public function attachTagToPost(Request $req)
     {
-        $post = Post::findOrFail($req->post_id);
-        $tag = Tag::findOrFail($req->tag_id);
-        $post->tag()->attach($tag->id);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Your attached tag is established',
-        ]);
+        try {
+            $post = Post::findOrFail($req->post_id);
+            $tag = Tag::findOrFail($req->tag_id);
+            $post->tag()->attach($tag->id);
+            return $this->successWithMessage("Your attached tag is established");
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(PostRequest $request)
     {
-        $post = Post::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'status' => $request->status,
-            'user_id' => Auth::user()->id,
-            'category_id' => $request->category_id
-        ]);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Post has been added succesfully',
-            'Post' => $post,
-        ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Posts  $posts
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $post = Post::findOrFail($id);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Post that you asked for',
-            'Post' => $post,
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Posts  $posts
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $userPost = Auth::user()->posts;
-        $posts = json_decode($userPost, true);
-        $isOwner = false;
-
-        foreach ($posts as $sub) {
-            foreach ($sub as $key => $value) {
-                if ($key == 'id' && $value == $id) {
-                    $isOwner = true;
-                }
-            }
-        }
-
-        if ($isOwner) {
-            $post = Post::find($id);
-            $post->update([
+        try {
+            $post = Post::create([
                 'title' => $request->title,
                 'content' => $request->content,
                 'status' => $request->status,
                 'user_id' => Auth::user()->id,
                 'category_id' => $request->category_id
             ]);
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Post has been updated succesfully',
-                'Post' => $post
-            ]);
+            return $this->successWithData($post);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Posts  $posts
-     * @return \Illuminate\Http\Response
-     */
+    public function show($id)
+    {
+        try {
+            $post = Post::findOrFail($id);
+            return $this->successWithData($post);
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $userPost = Auth::user()->posts;
+            $posts = json_decode($userPost, true);
+            $isOwner = false;
+
+            foreach ($posts as $sub) {
+                foreach ($sub as $key => $value) {
+                    if ($key == 'id' && $value == $id) {
+                        $isOwner = true;
+                    }
+                }
+            }
+
+            if ($isOwner) {
+                $post = Post::find($id);
+                $post->update([
+                    'title' => $request->title,
+                    'content' => $request->content,
+                    'status' => $request->status,
+                    'user_id' => Auth::user()->id,
+                    'category_id' => $request->category_id
+                ]);
+                return $this->successWithData($post);
+            }
+        } catch (Exception $e) {
+            return $this->errorWithMessage($e);
+        }
+    }
+
     public function destroy(Posts $posts)
     {
-        //
     }
 }
